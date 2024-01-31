@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import logo from "../../images/logo.png";
 import cartIcon from "../../images/cartIcon.png";
 import Image from 'next/image';
@@ -6,8 +6,32 @@ import { BiCaretDown } from "react-icons/bi";
 import { SlLocationPin } from 'react-icons/sl';
 import { HiOutlineSearch } from 'react-icons/hi';
 import Link from 'next/link';
+import { useSelector, useDispatch } from 'react-redux';
+import { StateProps } from '../../../type';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { addUser } from '@/store/next.Slice';
 
 const Header = () => {
+  const { data: session } = useSession();
+  const { productData, favoriteData, userInfo } = useSelector(
+    (state: StateProps) => state.next
+  );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (session) {
+      dispatch(
+        addUser({
+          name: session?.user?.name,
+          email: session?.user?.email,
+          image: session?.user?.image,
+
+        })
+      );
+    };
+  }, [session]);
+
   return (
     <div className='w-full h-20 bg-amazon_blue text-lightText sticky top-0 z-50'>
       <div className='h-full w-full mx-auto inline-flex items-center justify-between gap-1 mdl:gap-3 px-4'>
@@ -30,26 +54,53 @@ const Header = () => {
             <HiOutlineSearch />
           </span>
         </div>
+        {userInfo ? (
+          <div className='flex items-center px-2 border border border-transparent
+           hover:border-white cursor-pointer duration-300 h-[70%] gap-1'>
 
-        <div className='text-xs text-gray-100 flex flex-col justify-center px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]'>
-          <p>Ola, Login</p>
-          <p className='text-white font-bold flex items-center'>
-            Conta & Lista
-            <span>
-              <BiCaretDown />
-            </span>
-          </p>
-        </div>
-
-        <div className='text-xs text-gray-100 flex flex-col justify-center px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]'>
+            <img src={userInfo.image} alt='userImage'
+              className='w-8 h-8 rounded-full object-cover' />
+            <div className='text-xs text-gray-100 flex flex-col justify-between'>
+              <p className='text-white font-bold'>{userInfo.name}</p>
+              <p>{userInfo.email}</p>
+            </div>
+          </div>
+        ) : (
+          <div
+            onClick={() => signIn()}
+            className='text-xs text-gray-100 flex flex-col justify-center px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%]'>
+            <p>Ola, Login</p>
+            <p className='text-white font-bold flex items-center'>
+              Conta & Lista
+              <span>
+                <BiCaretDown />
+              </span>
+            </p>
+          </div>
+        )}
+        <Link
+          href={"/favorite"}
+          className='text-xs text-gray-100 flex flex-col justify-center px-2
+           border border-transparent hover:border-white cursor-pointer duration-300 h-[70%] relative'
+        >
           <p>Marcados</p>
           <p className='text-white font-bold'>& Favoritos</p>
-        </div>
+          {favoriteData.length > 0 && (
+            <span className='absolute pr-px font-semibold right-0 top-2 w-4 h-4 border-[1px] border-gray-400 flex items-center justify-center text-xs text-amazon_yellow'>
+              {favoriteData.length}
+            </span>
+          )}
+        </Link>
 
         <Link href={"/Cart"} className='flex items-center px-2 border border-transparent hover:border-white cursor-pointer duration-300 h-[70%] relative'>
-          <Image className='w-auto object-cover h-8' src={cartIcon} alt='Carrinho-imagem' />
+          <Image className='w-auto object-cover h-8'
+            src={cartIcon}
+            alt='Carrinho-imagem'
+          />
           <p className='text-sm text-white font-bold mt-3'>Carrinho</p>
-          <span className='absolute text-amazon_yellow text-sm top-2 left-[29px] font-semibold '>1</span>
+          <span className='absolute text-amazon_yellow text-sm top-2 left-[29px] font-semibold '>
+            {productData ? productData.length : 0}
+          </span>
         </Link>
       </div>
 

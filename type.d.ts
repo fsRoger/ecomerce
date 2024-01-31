@@ -20,6 +20,7 @@ export interface StoreProduct{
   price: number;
   title:string;
   _id: number;
+  quantity:number;
 }
 
 export interface StateProps {

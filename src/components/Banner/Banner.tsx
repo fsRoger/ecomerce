@@ -1,9 +1,9 @@
 import { Carousel } from 'react-responsive-carousel';
 import Image from 'next/image';
 
-import laptopImg from "../../images/slider/laptop.jpg";
-import foneVermelhoImg from "../../images/slider/fone-vermelho.jpg";
-import fonePretoImg from "../../images/slider/fone-preto.png";
+import laptopImg from "../../images/slider/laptopmini.jpg";
+import fundotecImg from "../../images/slider/fundo-tec.jpg";
+
 
 
 
@@ -19,10 +19,10 @@ const Banner = () => {
         showThumbs={false}
         interval={2000}>
         <div>
-          <Image priority src={foneVermelhoImg} alt='foneVermelho' />
+          <Image priority src={laptopImg} alt='foneVermelho' />
         </div>
         <div>
-          <Image src={fonePretoImg} alt='fonePreto' />
+          <Image src={fundotecImg} alt='fonePreto' />
         </div>
         <div>
           <Image src={laptopImg} alt='laptop' />
